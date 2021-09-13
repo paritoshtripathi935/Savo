@@ -9,3 +9,7 @@ Today the web provides thousands of resources for the same course. Being student
 
 This brings the need for our proposal to come into existence. Our recommendation system will help you browse through every course that has been made till today and help you find the one that meets your needs and requirements. 
 SAVO stands out from other platforms as it suggests courses after a detailed analysis of a person's academic background and expertise in their specific fields.
+
+## Tech used
+1. Django for backend and frontend
+2. NLP for recomendation system
