@@ -13,3 +13,4 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 ## Tech used
 1. Django for backend and frontend
 2. NLP for recomendation system
+3. Mongo DB for DB
