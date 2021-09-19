@@ -14,3 +14,15 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 1. Django for backend and frontend
 2. NLP for recomendation system
 3. Mongo DB for DB
+
+## list of websites
+1. YouTube 
+2. Udemy 
+3. Edex 
+4. Coursera 
+5. Upskill
+6. Harvard and Stanford
+7. IBM
+8. google
+9. microsoft
+10. datacamp
