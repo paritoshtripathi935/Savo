@@ -33,4 +33,4 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 
 ## Timeline
 
-![Timeline](![Data Flow](https://github.com/paritoshtripathi935/Savo/blob/main/new)
+![Timeline](https://github.com/paritoshtripathi935/Savo/blob/main/Design_documents/Timeline.png)
