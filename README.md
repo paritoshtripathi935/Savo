@@ -27,5 +27,4 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 9. microsoft
 10. datacamp
 
-![Data Flow](https://github.com/paritoshtripathi935/Savo/blob/main/new.png)
 Format: ![Alt Text](https://github.com/paritoshtripathi935/Savo/blob/main/new.png)
