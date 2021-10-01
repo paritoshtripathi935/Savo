@@ -26,7 +26,7 @@ Page = 20  # here write number of pages you want to scrape
 for i in range(1, Page):
     print('Opening Search Pages ' + str(i))
     # make changes here for the multiple courses
-    website = "https://www.udemy.com/courses/search/?p={}&q=python&src=ukw".format(i)
+    website = "https://www.udemy.com/courses/search/?p={}&q=java&src=ukw".format(i)
     driver.get(website)
     print('Accessing Webpage OK \n')
 
@@ -73,7 +73,7 @@ for i in range(1, Page):
 columns = ['url', 'Course Title', 'Course Headline', 'Instructor', 'Rating', 'course_length', 'number_of_lectures',
            'difficulty']
 df = pd.DataFrame(data=rows, columns=columns)
-df.to_csv('Udemy_python_Courses.csv', index=False)
+df.to_csv('Udemy_Java_Courses.csv', index=False)
 driver.quit()
 
 end = time.time()
