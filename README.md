@@ -31,7 +31,7 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 
 ## Workflow-Data
 
-![Data Flow](https://github.com/paritoshtripathi935/Savo/blob/main/Data_flow.png)
+<img![Data Flow](https://github.com/paritoshtripathi935/Savo/blob/main/Data_flow.png)>
 
 ## Timeline
 
