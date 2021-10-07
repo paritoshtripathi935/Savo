@@ -91,4 +91,4 @@ for links in range(0, len(urls)):
 df = pd.DataFrame({"links": urls, "names": name, 'Views': view, "likes": likes})
 df.to_csv("youtube.csv")
 
-
+driver.close()
