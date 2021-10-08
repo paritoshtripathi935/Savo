@@ -17,9 +17,12 @@ The data we need from youtube be per topic -
 3.Time
 4.views
 5.likes
+6 dislikes(extra)
 
 we need to automate this process of getting data
 
 Problems -
 #1 Sometimes ad video pop up of that particular course need to find hence mixing up the search results
+
 ## any future problems add here
+#2 find a universal factor to rate the qualities of videos

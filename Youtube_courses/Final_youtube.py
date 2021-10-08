@@ -15,7 +15,15 @@ time_published = []
 likes = []
 no_comments = []
 
-programming_languages = ["python", "java", "Cpp", "Javascript", "Sql"]  # add programing languages here only it will get all the data in one csv
+programming_languages = ["python",
+                         "java",
+                         "Cpp",
+                         "C",
+                         "Assembly Language",
+                         "PHP",
+                         "JavaScript",
+                         "R",
+                         "Sql"]  # add programing languages here only it will get all the data in one csv
 
 driver = webdriver.Chrome('/home/paritosh/PycharmProjects/Youtube/chromedriver')  # this is chrome you have to download it from google
 
@@ -88,7 +96,12 @@ for links in range(0, len(urls)):
     # no_comments.append(no_comment.text)  # adding age to
 
 
-df = pd.DataFrame({"links": urls, "names": name, 'Views': view, "likes": likes})
-df.to_csv("youtube.csv")
+df = pd.DataFrame({"links": urls,
+                   "names": name,
+                   'Views': view,
+                   "likes": likes,
+                   "time": time_published})
+
+df.to_csv("youtube.csv ")
 
 driver.close()
