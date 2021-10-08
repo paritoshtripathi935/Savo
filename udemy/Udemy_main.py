@@ -12,6 +12,15 @@ start = time.time()
 rows = []  # list to store all the elements
 delay = 15
 
+programming_languages = ["python",
+                         "java",
+                         "C",
+                         "Assembly Language",
+                         "PHP",
+                         "JavaScript",
+                         "R",
+                         "Sql"]  # add programing languages here only it will get all the data in one csv
+
 
 def extract_text(soup_obj, tag, attribute_name, attribute_value):
     txt = soup_obj.find(tag, {attribute_name: attribute_value}).text.strip() if soup_obj.find(tag, {
@@ -24,54 +33,80 @@ driver = webdriver.Chrome('/home/paritosh/PycharmProjects/Youtube/chromedriver')
 Page = 20  # here write number of pages you want to scrape
 
 for i in range(1, Page):
-    print('Opening Search Pages ' + str(i))
-    # make changes here for the multiple courses
-    website = "https://www.udemy.com/courses/search/?p={}&q=python&src=ukw".format(i)
-    driver.get(website)
-    print('Accessing Webpage OK \n')
+    for j in range(0, len(programming_languages)):
 
-    time.sleep(5)
+        print('Opening Search Pages ' + programming_languages[j] + " " + str(i))
+        # make changes here for the multiple courses
 
-    try:
-        WebDriverWait(driver, delay).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'course-list--container--3zXPS')))
-    except TimeoutException:
-        print('Loading exceeds delay time')
-        break
-    else:
-        soup = BeautifulSoup(driver.page_source, 'html.parser')  # setting up the soup and gets content of all the soup
-        course_list = soup.find('div', {
-            'class': 'course-list--container--3zXPS'})  # you have to inspect element for to find this classes
+        website = ("https://www.udemy.com/courses/search/?p={}&q={}&src=ukw".format(i, programming_languages[j]))  # Main url here please make different copy of code if want to add changes
+        driver.get(website)
 
-        courses = course_list.find_all('a', {'class': 'udlite-custom-focus-visible browse-course-card--link--3KIkQ'})
+        print('Accessing Webpage OK \n')
 
-        for course in courses:
-            course_url = '{0}{1}'.format('https://www.udemy.com', course['href'])  # this find links and joins
+        time.sleep(5)  # delay given for pages to load
 
-            course_title = course.select('div[class*="course-card--course-title"]')[0].text  # this find titles of courses
+        try:
+            WebDriverWait(driver, delay).until(
+                EC.presence_of_element_located((By.CLASS_NAME, 'course-list--container--3zXPS')))
+        except TimeoutException:
+            print('Loading exceeds delay time')
+            break
+        else:
+            soup = BeautifulSoup(driver.page_source,
+                                 'html.parser')  # setting up the soup and gets content of all the soup
+            course_list = soup.find('div', {
+                'class': 'course-list--container--3zXPS'})  # you have to inspect element for to find this classes
 
-            course_headline = extract_text(course, 'p', 'data-purpose', 'safely-set-inner-html:course-card:course-headline')  # description of the course
+            courses = course_list.find_all('a',
+                                           {'class': 'udlite-custom-focus-visible browse-course-card--link--3KIkQ'})
 
-            author = extract_text(course, 'div', 'data-purpose', 'safely-set-inner-html:course-card:visible-instructors')
+            for course in courses:
+                course_url = '{0}{1}'.format('https://www.udemy.com', course['href'])  # this find links and joins
 
-            course_rating = extract_text(course, 'span', 'data-purpose', 'rating-number')
+                course_title = course.select('div[class*="course-card--course-title"]')[
+                    0].text  # this find titles of courses
 
-            course_detail = course.find_all('span', {'class': 'course-card--row--29Y0w'})
+                course_headline = extract_text(course, 'p', 'data-purpose',
+                                               'safely-set-inner-html:course-card:course-headline')  # description of the course
 
-            try:  # have to use this because of the null values
-                course_length = course_detail[0].text
-                number_of_lectures = course_detail[1].text
-                difficulty = course_detail[2].text
-            except IndexError:
-                pass
+                author = extract_text(course, 'div', 'data-purpose',
+                                      'safely-set-inner-html:course-card:visible-instructors')  # instructor of the course
 
-            rows.append(
-                [course_url, course_title, course_headline, author, course_rating, course_length, number_of_lectures,
-                 difficulty]
-            )
+                course_rating = extract_text(course, 'span', 'data-purpose', 'rating-number')  # ratings of the course
 
-columns = ['url', 'Course Title', 'Course Headline', 'Instructor', 'Rating', 'course_length', 'number_of_lectures',
+                course_price = extract_text(course, 'div', 'data-purpose', 'course-price-text')  # price of the course
+
+                course_detail = course.find_all('span', {'class': 'course-card--row--29Y0w'})
+
+                try:  # have to use this because of the null values
+                    course_length = course_detail[0].text
+                    number_of_lectures = course_detail[1].text
+                    difficulty = course_detail[2].text
+                except IndexError:
+                    pass
+
+                rows.append(
+                    [course_url,
+                     course_title,
+                     course_headline,
+                     author,
+                     course_rating,
+                     course_price,
+                     course_length,
+                     number_of_lectures,
+                     difficulty]
+                )
+
+columns = ['url',
+           'Title',
+           'Course Headline',
+           'Instructor',
+           'Rating',
+           'Price',
+           'length',
+           'number_of_lectures',
            'difficulty']
+
 df = pd.DataFrame(data=rows, columns=columns)
 df.to_csv('Udemy_python_Courses.csv', index=False)
 driver.quit()
