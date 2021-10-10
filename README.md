@@ -2,10 +2,6 @@
 
 ![logo](https://github.com/paritoshtripathi935/Savo/blob/main/Classy%20Savo.png)
 
-# contact
-
-[linkden](https://www.linkedin.com/posts/paritosh-tripathi-b83aa91bb_training-learning-teaching-activity-6848944231868903424-ixWG)
-
 ## What is Savo?
 Savo aims to provide a one-stop solution to one of the most prominent problems among college/school students, i.e. Which online certification course would be best suited for them? Often it is confusing for students to figure out which course to take up when there are about tens of them teaching the same topic. 
 
@@ -40,3 +36,8 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 ## Timeline
 
 ![Timeline](https://github.com/paritoshtripathi935/Savo/blob/main/Design_documents/Timeline.png)
+
+## contact
+
+[linkden](https://www.linkedin.com/posts/paritosh-tripathi-b83aa91bb_training-learning-teaching-activity-6848944231868903424-ixWG)
+[twitter](https://twitter.com/kanhiya_0w0)
