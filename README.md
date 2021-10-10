@@ -40,4 +40,5 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 ## contact
 
 [linkden](https://www.linkedin.com/posts/paritosh-tripathi-b83aa91bb_training-learning-teaching-activity-6848944231868903424-ixWG)
+
 [twitter](https://twitter.com/kanhiya_0w0)
