@@ -23,12 +23,11 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 2. Udemy 
 3. Edex 
 4. Coursera 
-5. Upskill
-6. Harvard and Stanford
-7. IBM
-8. google
-9. microsoft
-10. FreeCodeCamp
+5. Harvard and Stanford
+6. IBM
+7. google
+8. microsoft
+9. FreeCodeCamp
 
 ## Workflow-Data
 
