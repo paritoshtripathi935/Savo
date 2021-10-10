@@ -28,9 +28,7 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 7. IBM
 8. google
 9. microsoft
-10. datacamp
-11. udacity
-12. FreeCodeCamp
+10. FreeCodeCamp
 
 ## Workflow-Data
 
