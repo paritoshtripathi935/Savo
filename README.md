@@ -1,4 +1,5 @@
-# Savo
+<h1 align="center">Hi 👋,Welcome to Savo</h1>
+<img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
 ![logo](https://github.com/paritoshtripathi935/Savo/blob/main/Classy%20Savo.png)
 
@@ -39,6 +40,14 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 
 ## contact
 
-[linkden](https://www.linkedin.com/posts/paritosh-tripathi-b83aa91bb_training-learning-teaching-activity-6848944231868903424-ixWG)
+### Connect with me:
 
-[twitter](https://twitter.com/kanhiya_0w0)
+[<img align="left" alt="codeSTACKr | Twitter" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/twitter.svg" />][twitter]
+[<img align="left" alt="codeSTACKr | LinkedIn" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/linkedin.svg" />][linkedin]
+[<img align="left" alt="codeSTACKr | Instagram" width="22px" src="https://cdn.jsdelivr.net/npm/simple-icons@v3/icons/instagram.svg" />][instagram]
+
+<br />
+
+[twitter]: https://twitter.com/paritos72141492
+[instagram]: https://www.instagram.com/w2_datascience/?hl=en
+[linkedin]: https://www.linkedin.com/in/paritosh-tripathi-b83aa91bb/
