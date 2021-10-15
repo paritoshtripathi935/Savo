@@ -15,6 +15,8 @@ duration = []
 difficulty_level = []
 Course_description = []
 platforms = []
+price = []
+
 driver = webdriver.Chrome(
     '/home/paritosh/PycharmProjects/Youtube/chromedriver')  # this is chrome you have to download it from google
 
@@ -31,7 +33,7 @@ driver = webdriver.Chrome(
                 break    
 """
 
-page = 8
+page = 18
 
 
 def Data():
@@ -42,7 +44,8 @@ def Data():
         print("Loading Page number ", i)
 
         driver.get(
-            'https://online-learning.harvard.edu/Catalog/Free?page={}'.format(i))
+            'https://online-learning.harvard.edu/catalog?keywords=&start_date_range%5Bmin%5D%5Bdate%5D=&start_date_range%5Bmax%5D%5Bdate%5D=&page={}'.format(
+                i))
 
         content = driver.page_source.encode('utf-8').strip()  # this get content of a page in normal way
 
@@ -77,7 +80,8 @@ for links in range(0, len(urls)):
 
     length = new_soup.find("div", class_="field field-name-field-duration")
 
-    difficulty = new_soup.find("div", class_="field field-name-field-difficulty field-type-list-text field-label-inline clearfix")
+    difficulty = new_soup.find("div",
+                               class_="field field-name-field-difficulty field-type-list-text field-label-inline clearfix")
     difficulty_tag = difficulty.find("div", class_="field")
 
     description = new_soup.find("div", class_="field field-name-body field-type-text-with-summary field-label-above")
@@ -87,24 +91,45 @@ for links in range(0, len(urls)):
     try:
         platform_tag = platform.find("div", class_="field field-name-field-course-platform")
     except AttributeError:
+        platform_tag
         pass
+
+    prices = new_soup.find("div", class_="field field-name-price")
 
     name.append(title.text)
     types.append(subject_tag.text)
-    duration.append(length.text)
+    try:
+        duration.append(length.text)
+    except AttributeError:
+        duration.append("self paced")
+        pass
     difficulty_level.append(difficulty_tag.text)
     Course_description.append(description_tag.text)
     platforms.append(platform_tag.text)
+    price.append(prices.text)
+    print("getting details of page no ", links)
 
+
+print(len(urls))
+print(len(name))
+print(len(types))
+print(len(duration))
+print(len(price))
+print(len(difficulty_level))
+print(len(Course_description))
+print(len(platforms))
+
+driver.close()
 
 df = pd.DataFrame({"links": urls,
                    "names": name,
                    'Type': types,
                    "Duration": duration,
+                   "Price": price,
                    "difficulty": difficulty_level,
                    "Description": Course_description,
                    "platform": platforms})
 
 df.to_csv("Harvard_courses.csv")
 
-driver.close()
+
