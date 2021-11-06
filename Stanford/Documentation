@@ -1,0 +1,20 @@
+Welcome to documentation for stanford courses.
+
+Libraries we are going to use in are -
+1. selenium
+2. Beautiful soup
+3. bs4
+4. time
+5. requests
+6. pandas
+
+Download chromedriver from here - https://chromedriver.chromium.org/
+Remember the path of driver you will be needing it-
+
+The data we need from stanford be per topic -
+
+
+we need to automate this process of getting data
+
+Problems -
+#1 work in progress

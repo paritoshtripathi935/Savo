@@ -94,7 +94,8 @@ for i in range(1, Page):
                      course_price,
                      course_length,
                      number_of_lectures,
-                     difficulty]
+                     difficulty,
+                     programming_languages[j]]
                 )
 
 columns = ['url',
@@ -105,10 +106,11 @@ columns = ['url',
            'Price',
            'length',
            'number_of_lectures',
-           'difficulty']
+           'difficulty',
+           'type']
 
 df = pd.DataFrame(data=rows, columns=columns)
-df.to_csv('Udemy_python_Courses.csv', index=False)
+df.to_csv('Udemy_programming_languages.csv', index=False)
 driver.quit()
 
 end = time.time()
