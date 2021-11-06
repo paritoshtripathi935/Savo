@@ -33,29 +33,29 @@ driver = webdriver.Chrome(
                 break    
 """
 
-page = 18
+page = 20
 
 
 def Data():
-    for i in range(0, page):
+    for i in range(1, page):
 
         # this is the main link dont touch this
 
         print("Loading Page number ", i)
 
         driver.get(
-            'https://online-learning.harvard.edu/catalog?keywords=&start_date_range%5Bmin%5D%5Bdate%5D=&start_date_range%5Bmax%5D%5Bdate%5D=&page={}'.format(
+            'https://www.coursera.org/search?query=python%20programming&page={}&index=prod_all_launched_products_term_optimization'.format(
                 i))
 
         content = driver.page_source.encode('utf-8').strip()  # this get content of a page in normal way
 
         soup = BeautifulSoup(content, 'lxml')  # this is used to find the things we need in the source code
 
-        link_class = soup.findAll("div", class_="field field-name-title-qs")  # titles of youtube videos is stored here
+        link_class = soup.findAll("li", class_="ais-InfiniteHits-item")  # titles of youtube videos is stored here
 
         for j in link_class[0:]:
             link_tag = j.find("a")
-            base = 'https://online-learning.harvard.edu'
+            base = 'https://www.coursera.org/'
             try:
                 if 'href' in link_tag.attrs:
                     link = link_tag.get('href')
@@ -67,7 +67,7 @@ def Data():
 
 
 Data()
-
+'''
 for links in range(0, len(urls)):
     driver.get(urls[links])
 
@@ -108,18 +108,12 @@ for links in range(0, len(urls)):
     price.append(prices.text)
     print("getting details of page no ", links)
 
-
+'''
 print(len(urls))
-print(len(name))
-print(len(types))
-print(len(duration))
-print(len(price))
-print(len(difficulty_level))
-print(len(Course_description))
-print(len(platforms))
+print(urls)
 
 driver.close()
-
+'''
 df = pd.DataFrame({"links": urls,
                    "names": name,
                    'Type': types,
@@ -130,3 +124,4 @@ df = pd.DataFrame({"links": urls,
                    "platform": platforms})
 
 df.to_csv("Harvard_courses.csv")
+'''
