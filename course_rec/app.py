@@ -73,7 +73,7 @@ def main():
     menu = ["Home", "Recommend", "About"]
     choice = st.sidebar.selectbox("Menu", menu)
 
-    df = load_data("/home/paritosh/PycharmProjects/Youtube/course_rec/Udemy_python_Courses.csv")
+    df = load_data("https://github.com/paritoshtripathi935/Savo/blob/main/course_rec/Udemy_python_Courses_csv.csv")
 
     if choice == "Home":
         st.subheader(
