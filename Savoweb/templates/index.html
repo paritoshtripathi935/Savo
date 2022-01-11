@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE HTML>
+<!--
+	Savo
+	A course offering website
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Savo</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+	</head>
+	<body class="landing is-preload">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+				<header id="header" class="alt">[]
+					<h1><a href="index.html">Savo</a> India</h1>
+					<nav id="nav">
+						<ul>
+							<li><a href="{% url 'index' %}">Home</a></li>
+							<li>
+								<a href="#" class="icon solid fa-angle-down">More</a>
+								<ul>
+									<li><a href="{% url 'about' %}">About</a></li>
+									<li><a href="{% url 'contact' %}">Contact</a></li>
+									<!--
+									<li><a href="{% url 'elements' %}">Elements</a></li>
+									<li>
+										<a href="#">Submenu</a>
+										<ul>
+											<li><a href="#">Option One</a></li>
+											<li><a href="#">Option Two</a></li>
+											<li><a href="#">Option Three</a></li>
+											<li><a href="#">Option Four</a></li>
+										</ul>
+									</li>
+								-->
+								</ul>
+							</li>
+							<li><a href="#" class="button">Sign Up</a></li>
+						</ul>
+					</nav>
+				</header>
+
+			<!-- Banner -->
+				<section id="banner">
+					<h2>Savo</h2>
+					<p>All world class courses in one place.</p>
+					<ul class="actions special">
+						<li><a href="#" class="button primary">Sign Up</a></li>
+						<li><a href="#" class="button">Learn More</a></li>
+					</ul>
+				</section>
+
+			<!-- Main -->
+				<section id="main" class="container">
+
+					<section class="box special">
+						<header class="major">
+							<h2>Introducing the ultimate search engine
+							<br />
+							for getting courses tailored for you.</h2>
+							<p>Savo aims to provide a one-stop solution to one of the most prominent problems among college/school students, i.e. Which online certification course would be best suited for them.</p>
+						</header>
+						<span class="image featured"><img src="{% static 'images/pic01.png' %}" alt="" /></span>
+					</section>
+
+					<section class="box special features">
+						<div class="features-row">
+							<section>
+								<span class="icon solid major fa-bolt accent2"></span>
+								<h3>Red Carpet</h3>
+								<p>Savo will provide a ranked list of courses for particular topic from all Major platforms.</p>
+							</section>
+							<section>
+								<span class="icon solid major fa-chart-area accent3"></span>
+								<h3>Tailored Recommendations</h3>
+								<p>Savo will give recommendation on carrier paths and courses by evaluting the performance and interest of easch individual.</p>
+							</section>
+						</div>
+						<div class="features-row">
+							<section>
+								<span class="icon solid major fa-cloud accent4"></span>
+								<h3>Cloud Support</h3>
+								<p>Cloud support for all students for storing their certifications and projects.</p>
+							</section>
+							<section>
+								<span class="icon solid major fa-lock accent5"></span>
+								<h3>Data Privacy</h3>
+								<p>Savo Belevies in data privacy and we respect everyone privacy by not sharing the data with any other 3rd party.</p>
+							</section>
+						</div>
+					</section>
+
+					<div class="row">
+						<div class="col-6 col-12-narrower">
+
+							<section class="box special">
+								<span class="image featured"><img src="{% static 'images/pic02.jpg' %}" alt="" /></span>
+								<h3>Sed lorem adipiscing</h3>
+								<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+								<ul class="actions special">
+									<li><a href="#" class="button alt">Learn More</a></li>
+								</ul>
+							</section>
+
+						</div>
+						<div class="col-6 col-12-narrower">
+
+							<section class="box special">
+								<span class="image featured"><img src="{% static 'images/pic03.jpg' %}" alt="" /></span>
+								<h3>Accumsan integer</h3>
+								<p>Integer volutpat ante et accumsan commophasellus sed aliquam feugiat lorem aliquet ut enim rutrum phasellus iaculis accumsan dolore magna aliquam veroeros.</p>
+								<ul class="actions special">
+									<li><a href="#" class="button alt">Learn More</a></li>
+								</ul>
+							</section>
+
+						</div>
+					</div>
+
+				</section>
+
+			<!-- CTA -->
+				<section id="cta">
+
+					<h2>Sign up for early access</h2>
+					<p>You will be notified as soon as possible.</p>
+
+					<form>
+						<div class="row gtr-50 gtr-uniform">
+							<div class="col-8 col-12-mobilep">
+								<input type="email" name="email" id="email" placeholder="Email Address" />
+							</div>
+							<div class="col-4 col-12-mobilep">
+								<input type="submit" value="Sign Up" class="fit" />
+							</div>
+						</div>
+					</form>
+
+				</section>
+
+			<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<li><a href="https://twitter.com/kanhiya_0w0" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
+						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+						<li><a href="#" class="icon brands fa-google-plus"><span class="label">Google+</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>&copy; All rights reserved.</li><li>Design: <a href="http://www.paritoshtripathi.social">Savo</a></li>
+					</ul>
+				</footer>
+
+		</div>
+
+		<!-- Scripts -->
+			<script src="{% static 'js/jquery.min.js' %}"></script>
+			<script src="{% static 'js/jquery.dropotron.min.js' %}"></script>
+			<script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
+			<script src="{% static 'js/browser.min.js' %}"></script>
+			<script src="{% static 'js/breakpoints.min.js' %}"></script>
+			<script src="{% static 'js/util.js' %}"></script>
+			<script src="{% static 'js/main.js' %}"></script>
+
+	</body>
+</html>
