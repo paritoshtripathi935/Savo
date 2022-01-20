@@ -16,9 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
+from Savoweb import accounts
 from course import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('course.urls')),
+    path('accounts/', include('accounts.urls'))
 ]
