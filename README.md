@@ -30,9 +30,9 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 8. microsoft
 9. FreeCodeCamp
 
-## Workflow-Data
+## landing page
 
-![Data Flow](https://github.com/paritoshtripathi935/Savo/blob/main/Data_flow.png)
+![Data Flow](https://github.com/paritoshtripathi935/Savo/blob/main/landing_page.png)
 
 ## Timeline
 
