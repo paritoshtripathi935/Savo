@@ -32,11 +32,11 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 
 ## landing page
 
-![Data Flow](https://github.com/paritoshtripathi935/Savo/blob/main/landing_page.png)
+![landing_page](https://github.com/paritoshtripathi935/Savo/blob/main/landing_page.png)
 
-## Timeline
+## login page
 
-![Timeline](https://github.com/paritoshtripathi935/Savo/blob/main/Design_documents/Timeline.png)
+![login_page](https://github.com/paritoshtripathi935/Savo/blob/main/login_page.png)
 
 ## contact
 
