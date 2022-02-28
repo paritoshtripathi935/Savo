@@ -8,6 +8,19 @@ Savo aims to provide a one-stop solution to one of the most prominent problems a
 
 Savo would provide them with a single platform that helps them to compare different courses on the same topic based on specific filters. No more would it be a hassle for students to get the right kind of guidance in choosing a course once they get their hands on savo.
 
+## landing page
+
+![landing_page](https://github.com/paritoshtripathi935/Savo/blob/main/landing_page.png)
+
+## login page
+
+![login_page](https://github.com/paritoshtripathi935/Savo/blob/main/login_page.png)
+
+## about page
+
+![about_page](https://github.com/paritoshtripathi935/Savo/blob/main/landing_page.png)
+
+
 ## Why Savo
 Today the web provides thousands of resources for the same course. Being students ourselves we identify the need for a consolidated platform that can fetch and provide the best options available for pursuing one’s desired courses. 
 
@@ -30,13 +43,6 @@ SAVO stands out from other platforms as it suggests courses after a detailed ana
 8. microsoft
 9. FreeCodeCamp
 
-## landing page
-
-![landing_page](https://github.com/paritoshtripathi935/Savo/blob/main/landing_page.png)
-
-## login page
-
-![login_page](https://github.com/paritoshtripathi935/Savo/blob/main/login_page.png)
 
 ## contact
 
