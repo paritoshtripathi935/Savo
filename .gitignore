@@ -281,4 +281,4 @@ cython_debug/
 
 *.bash_profile
 
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,django,python
+# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,django,pytho
