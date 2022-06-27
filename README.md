@@ -1,7 +1,7 @@
 <h1 align="center">Hi 👋,Welcome to Savo</h1>
 <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif">
 
-![logo](https://github.com/paritoshtripathi935/Savo/blob/main/Classy%20Savo.png)
+![logo](https://github.com/paritoshtripathi935/Savo/blob/main/Images/Classy%20Savo.png)
 
 ## What is Savo?
 Savo aims to provide a one-stop solution to one of the most prominent problems among college/school students, i.e. Which online certification course would be best suited for them? Often it is confusing for students to figure out which course to take up when there are about tens of them teaching the same topic. 
@@ -10,15 +10,15 @@ Savo would provide them with a single platform that helps them to compare differ
 
 ## landing page
 
-![landing_page](https://github.com/paritoshtripathi935/Savo/blob/main/landing_page.png)
+![landing_page](https://github.com/paritoshtripathi935/Savo/blob/main/Images/landing_page.png)
 
 ## login page
 
-![login_page](https://github.com/paritoshtripathi935/Savo/blob/main/login_page.png)
+![login_page](https://github.com/paritoshtripathi935/Savo/blob/main/Images/login_page.png)
 
 ## about page
 
-![about_page](https://github.com/paritoshtripathi935/Savo/blob/main/landing_page.png)
+![about_page](https://github.com/paritoshtripathi935/Savo/blob/main/Images/About_page.png)
 
 
 ## Why Savo
