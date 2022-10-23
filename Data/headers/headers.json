@@ -1,0 +1,13 @@
+{   
+    "authority":"maps.googleapis.com",
+    "accept":"*/*",
+    "accept-language":"en-GB,en;q=0.8",
+    "cache-control":"no-cache",
+    "pragma":"no-cache",
+    "referer":"https://fr.getaround.com/",
+    "sec-fetch-dest":"dest:script",
+    "sec-fetch-mode":"no-cors",
+    "sec-fetch-site":"cross-site",
+    "sec-gpc":"1",
+    "user-agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
+}
