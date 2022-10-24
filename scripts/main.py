@@ -1,3 +1,4 @@
+from ast import While
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -10,38 +11,7 @@ import random
 import time
 
 start = time.time()
-
-# code for create ec2instance 
 ip_list = []
-def create_ec2_instance(number_of_instance):
-    print("Creating ec2 instance", number_of_instance)
-    url = "http://172.31.39.71:8000/create/"
-    payload = {
-                "template_name":"SquidProxyServer",
-                "template_version":"3",
-                "rival":"getaround",
-                "ownerARN":"arn:aws:iam::047719688069:user/paritosh.tripathi@anakin.company",
-                "region": "ap-south-1",
-                "count":number_of_instance
-    }
-    response = requests.request("POST", url, json=payload)
-    print("All ec2 instance created")
-    for key, value in response.json().items():
-        ip_list.append(value['private'])
-
-
-def DeleteInstance():
-    print("Deleting ec2 instance")
-    url = "http://172.31.39.71:8000/terminate/"
-    payload = {
-                "template_name":"SquidProxyServer",
-                "template_version":"3",
-                "rival":"getaround",
-                "ownerARN":"arn:aws:iam::047719688069:user/paritosh.tripathi@anakin.company",
-                "region": "ap-south-1"
-        }
-    response = requests.request("POST", url, json=payload)
-    print("All Instances are deleted")
 
 request = requests.Session()
 retry = Retry(connect=5, backoff_factor=0.1)
@@ -57,6 +27,7 @@ class Scraper:
         self.servicable_api  = "https://fr.getaround.com/autocomplete/address?delivery_points_of_interest_only=false&enable_google_places=true&enable_imprecise_addresses=true&input={}"     
         self.category_data_frames = []
         self.fare_list = []
+        self.storage_path = "/mnt/efs/fs1/raw/getaround/"
 
 
     def join_get_car_api(self, address, city, end_date, end_time, start_date, start_time, latitude, longitude):
@@ -70,6 +41,7 @@ class Scraper:
     def ServiceableArea(self, address, ip):
         try:
             api = self.servicable_api.format(address)
+
             proxies = {
                 'http': f'http://{ip}:3128',
                 'https': f'http://{ip}:3128'
@@ -90,46 +62,108 @@ class Scraper:
                 'https': f'http://{ip}:3128'
             }
 
+            retry_counter_cardata = 0
+            retry_counter_faredata = 0
+            retry_counter_servicablearea = 0
+            
             if self.ServiceableArea(address, ip) == 200:
-                response = request.get(api, proxies=proxies)
-                print("ServiceableArea: ", address, response.status_code)
-
-                while response.status_code != 200:
                     response = request.get(api, proxies=proxies)
-                    print("Retrying: ", address, response.status_code)
-                    time.sleep(1)
-                    if response.status_code == 200:
+                    print("ServiceableArea: ", address, response.status_code)
 
-                        if (response.status_code == 200):
-                            parsed = response.json()
-                            print("Successfull Response", response.status_code, "for", address, "of", "GetCarData")
-                            self.category_data_frames.append(parsed)
+                    while response.status_code != 200:
+                        retry_counter_cardata += 1
 
-                            if parsed['cars'] == []:
-                                return
+                        response = request.get(api, proxies=proxies)
+                        print("Retrying Car Api", address, response.status_code, ip)
 
-                            for car in parsed['cars']:
-                                car_id = car['id']
-                                self.GetFareData(car_id, end_date, end_time, start_date, start_time)
-                                print("Successfull Response", response.status_code, "for car_id", car_id, "of", "GetFareData")
+                        time.sleep(random.randint(1, 5))
+                        if response.status_code == 200:
 
-                        break
-    
-                if (response.status_code == 200):
-                    parsed = response.json()
-                    print("Successfull Response", response.status_code, "for", address, "of", "GetCarData")
-                    self.category_data_frames.append(parsed)
-                    if parsed['cars'] == []:
-                        return
+                            if (response.status_code == 200):
+                                parsed = response.json()
+                                print("Successfull Response", response.status_code, "for", address, "of", "GetCarData")
+                                self.category_data_frames.append(parsed)
 
-                    for car in parsed['cars']:
-                        car_id = car['id']
-                        self.GetFareData(car_id, end_date, end_time, start_date, start_time, ip)
-                        print("Successfull Response", response.status_code, "for car_id", car_id, "of", "GetFareData")
-                    
+                                if parsed['cars'] == []:
+                                    print("No Cars Found")
+                                    return
+
+                                for car in parsed['cars']:
+                                    car_id = car['id']
+                                    self.GetFareData(car_id, end_date, end_time, start_date, start_time, ip)
+                            break
+                            
+                        if retry_counter_cardata == 5:
+                            break
+
+                    if (response.status_code == 200):
+                        parsed = response.json()
+                        print("Successfull Response", response.status_code, "for", address, "of", "GetCarData")
+                        self.category_data_frames.append(parsed)
+                        if parsed['cars'] == []:
+                            return
+
+                        for car in parsed['cars']:
+                            car_id = car['id']
+                            self.GetFareData(car_id, end_date, end_time, start_date, start_time, ip)
+                        
             else:
-                print("Address is not serviceable")
+                print("{}is not serviceable".format(address),"on ip", ip)
 
+            """
+            while self.ServiceableArea(address, ip) != 200 and self.ServiceableArea(address, ip) == 429:
+                retry_counter_servicablearea += 1
+                print("Retrying Service Api: ", retry_counter_servicablearea, "of", ip)
+
+                time.sleep(random.randint(1, 5))
+                
+                if self.ServiceableArea(address, ip) == 200:
+                    response = request.get(api, proxies=proxies)
+                    print("ServiceableArea: ", address, response.status_code)
+
+                    while response.status_code != 200:
+                        retry_counter_cardata += 1
+
+                        response = request.get(api, proxies=proxies)
+                        print("Retrying Car Api", address, response.status_code, ip)
+
+                        time.sleep(random.randint(1, 5))
+                        if response.status_code == 200:
+
+                            if (response.status_code == 200):
+                                parsed = response.json()
+                                print("Successfull Response", response.status_code, "for", address, "of", "GetCarData")
+                                self.category_data_frames.append(parsed)
+
+                                if parsed['cars'] == []:
+                                    return
+
+                                for car in parsed['cars']:
+                                    car_id = car['id']
+                                    self.GetFareData(car_id, end_date, end_time, start_date, start_time, ip)
+                            break
+                            
+                        if retry_counter_cardata == 5:
+                            break
+
+                    if (response.status_code == 200):
+                        parsed = response.json()
+                        print("Successfull Response", response.status_code, "for", address, "of", "GetCarData")
+                        self.category_data_frames.append(parsed)
+                        if parsed['cars'] == []:
+                            print("No Cars Found", address, "of", "GetCarData")
+                            return
+
+                        for car in parsed['cars']:
+                            car_id = car['id']
+                            self.GetFareData(car_id, end_date, end_time, start_date, start_time, ip)
+                        
+                else:
+                    print("{}is not serviceable".format(address),"on ip", ip)
+                
+                if retry_counter_servicablearea == 5:
+                    break
+            """
         except Exception as e:
             print('error: ', e)
             pass
@@ -138,10 +172,12 @@ class Scraper:
     def GetFareData(self, car_id, end_date, end_time, start_date, start_time, ip):
         try:
             api = self.join_get_fare_api(car_id, end_date, end_time, start_date, start_time)
+
             proxies = {
                 'http': f'http://{ip}:3128',
                 'https': f'http://{ip}:3128'
             }
+
             response = request.get(api, proxies=proxies)
 
             if (response.status_code == 200):
@@ -149,8 +185,10 @@ class Scraper:
                 self.fare_list.append(parsed)   
 
                 print('Sucessful Response: ', 'response.status_code: ', response.status_code, "of", car_id, "at", ip, "of FareData")
+                return response.status_code
             else:
                 print('Unsuccessful Response: ', 'response.status_code: ', response.status_code, "of", car_id, "at", ip, "of FareData")
+                return response.status_code
 
         except Exception as e:
             print('error: ', e)
@@ -171,15 +209,56 @@ class Scraper:
             df.to_json(filename, orient='records', lines=True)
         except Exception as e:
             print('Data Write Error of FareDataWriter: ', e)
+    
+    def create_ec2_instance(self, number_of_instance):
+        print("Creating {} EC2 Proxy Instance".format(number_of_instance))
+        url = "http://172.31.39.71:8000/create/"
+
+        payload = {
+                    "template_name":"SquidProxyServer",
+                    "template_version":"3",
+                    "rival":"getaround",
+                    "ownerARN":"arn:aws:iam::047719688069:user/paritosh.tripathi@anakin.company",
+                    "region": "ap-south-1",
+                    "count":number_of_instance
+        }
+        response = requests.request("POST", url, json=payload)
+
+        for key, value in response.json().items():
+            ip_list.append(value['private'])
+        
+        print("All EC2 Proxy Instance created")
+
+
+    def DeleteInstance(self):
+        print("Deleting EC2 Proxy instance")
+        url = "http://172.31.39.71:8000/terminate/"
+
+        payload = {
+                    "template_name":"SquidProxyServer",
+                    "template_version":"3",
+                    "rival":"getaround",
+                    "ownerARN":"arn:aws:iam::047719688069:user/paritosh.tripathi@anakin.company",
+                    "region": "ap-south-1"
+            }
+        response = requests.request("POST", url, json=payload)
+
+        print("All Instances are deleted")
 
 
 if __name__ == "__main__":
+    
     try:
+
         scraper = Scraper()
         df = pd.read_json('Data/geojson/google_geoJson.json', orient='records', lines=True) 
-        n = 3  # number of ec2 instances
-        create_ec2_instance(n)
+
+        n = 3
+        scraper.create_ec2_instance(n)
         time.sleep(5)
+        print("Waiting for EC2 instances to start")
+
+
         try:
             for i in range(0, 1000):
                 address = df[0][i]['address']
@@ -190,59 +269,27 @@ if __name__ == "__main__":
                 start_time = "06%3A00"
                 latitude = df[0][i]['lat']
                 longitude = df[0][i]['lon']
-                ip = random.choice(ip_list)
+                ip = ip_list[i%n] # roatating ip
                 data_chunck = [address, city, end_date, end_time, start_date, start_time, latitude, longitude,ip]
 
-                concc = Concurrency(worker_thread=50)
+                concc = Concurrency(worker_thread=100)
                 concc.run_thread(func=scraper.GetCarData, 
                 param_list=[data_chunck], param_name=["address", "city", "end_date", "end_time", "start_date", "start_time", "latitude", "longitude", "ip"])
             
-            scraper.CarDataWriter('/mnt/efs/fs1/raw/getaround/test_8.json')
-            scraper.FareDataWriter('/mnt/efs/fs1/raw/getaround/test_8_fare.json')
+            scraper.CarDataWriter('{}test_9_car.json'.format(scraper.storage_path))
+            scraper.FareDataWriter('{}test_9_fare.json'.format(scraper.storage_path))
 
         except Exception as e:
             print(e)
             pass
-        ip_list.clear()
-        DeleteInstance()
+
+        scraper.DeleteInstance()
         time.sleep(5)
-        """
-        create_ec2_instance()
-        time.sleep(20)
-        try:
-            df = pd.read_json('/mnt/efs/fs1/raw/getaround/test_6.json', orient='records', lines=True)
-            for i in range(0, len(df)):
-                try:
-                    car_id = df['cars'][i][0]['id']
-                    end_date = "2022-11-01"
-                    end_time = "07%3A00"
-                    start_date = "2022-10-31"
-                    start_time = "06%3A00"
-                    ip = random.choice(ip_list)
-                    data_chunck = [car_id, end_date, end_time, start_date, start_time, ip]
-
-                    concc = Concurrency(worker_thread=50)
-                    concc.run_thread(func=scraper.GetFareData, 
-                    param_list=[data_chunck], param_name=["car_id", "end_date", "end_time", "start_date", "start_time", "ip"])
-                except Exception as e:
-                    print(e)
-                    pass
-            
-            scraper.FareDataWriter('/mnt/efs/fs1/raw/getaround/fare_test_5.json')
-        
-        except Exception as e:
-            print(e)
-            pass
-        
-        ip_list.clear()
-        DeleteInstance()
-        time.sleep(25)
-        """
 
     except KeyboardInterrupt:
         print('KeyboardInterrupt')
-        DeleteInstance()
-        
+        scraper.DeleteInstance()
+
 
 end = time.time()
 
