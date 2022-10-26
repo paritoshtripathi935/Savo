@@ -1,0 +1,11 @@
+{
+    "authority":"uk.getaround.com",
+    "accept":"application/json",
+    "accept-language":"en-GB,en;q=0.5",
+    "referer":"https://uk.getaround.com/search?address=London+SW3&address_source=poi&poi_id=2349&latitude=51.4897&longitude=-0.1647&city_display_name=undefined&start_date=2022-10-26&start_time=06%3A30&end_date=2022-10-29&end_time=08%3A30&country_scope=GB&car_sharing=true&user_interacted_with_car_sharing=false&display_view=list&administrative_area=undefined",
+    "sec-fetch-dest":"empty",
+    "sec-fetch-mode":"cors",
+    "sec-fetch-site":"same-origin",
+    "sec-gpc":"1",
+    "user-agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
+}
