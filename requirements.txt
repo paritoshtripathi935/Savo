@@ -2,5 +2,4 @@ pandas
 requests
 numpy
 bs4
-polygeohasher
 geopy

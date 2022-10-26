@@ -8,6 +8,9 @@ import pandas as pd
 from concurrency import Concurrency
 import random
 import time
+import os
+import gzip
+import datetime
 
 start = time.time()
 
@@ -53,8 +56,10 @@ class Scraper:
         self.get_car_api = "https://fr.getaround.com/search.json?address={}&address_source=google&administrative_area=Grand%20Est&car_sharing=false&city_display_name={}&country_scope=FR&display_view=list&end_date={}&end_time={}&latitude={}&longitude={}&only_responsive=true&page=1&picked_car_ids=EMPTY&start_date={}&start_time={}&user_interacted_with_car_sharing=false&view_mode=list"
         self.get_fare_api = "https://fr.getaround.com/request_availability?car_id={}&end_date={}&end_time={}&start_date={}&start_time={}&web_version=true"                      
         self.servicable_api  = "https://fr.getaround.com/autocomplete/address?delivery_points_of_interest_only=false&enable_google_places=true&enable_imprecise_addresses=true&input={}"     
-        self.category_data_frames = []
+        self.category_data_frames = [1,2]
         self.fare_list = []
+        self.service_location = []
+        self.storage_path = "/mnt/efs/fs1/raw/getaround/"
 
     def join_get_car_api(self, address, city, end_date, end_time, start_date, start_time, latitude, longitude):
         return self.get_car_api.format(address, city, end_date, end_time, latitude, longitude, start_date, start_time)
@@ -72,7 +77,8 @@ class Scraper:
             }
             """
             response = request.get(api)
-            print("ServiceableArea: ", response.status_code)
+            print("ServiceableArea: ", response.status_code, "of", address)
+            self.service_location.append(response.json())
             return response.status_code
 
         except Exception as e:
@@ -159,14 +165,34 @@ class Scraper:
             print('error: ', e)
 
 
-    def CarDataWriter(self, filename):
+    def CarDataWriter(self, latitude, longitude):
+        # raw/{date}{time}/{address}/{lat}_{lon}/{car_id}.json.gz
+        # store the data in above format in raw folder
         try:
-            df = pd.DataFrame(self.category_data_frames)
-            df.to_json(filename, orient='records', lines=True)
-        
+            Datetime = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
+            # make dir self.storage_path/raw/{date}{time}
+            if not os.path.exists(self.storage_path + "raw/"):
+                os.makedirs(self.storage_path + "raw/")
+            
+            # make dir self.storage_path/raw/{date}{time}/Location/{lat}_{lon}
+            if not os.path.exists(self.storage_path + "raw/" + Datetime + "/" + "Location/" + str(latitude) + "," + str(longitude) + "/"):
+                os.makedirs(self.storage_path + "raw/" + Datetime + "/" + "Location/" + str(latitude) + "," + str(longitude) + "/")
+            
+
+            # write the data in json.gz form in self.storage_path/raw/{date}{time}/Location/{lat}_{lon}/filename.json.gz
+            with gzip.open(self.storage_path + "raw/" + Datetime + "/" + "Location/" + str(latitude) + "," + str(longitude) + "/" + timestamp + ".json.gz", 'wt') as f:
+                json.dump(self.category_data_frames, f)
+                # clear the data after writing
+                self.category_data_frames.clear()
+                
+                print("CarDataWriter: is written in raw folder")
+
         except Exception as e:
             print('Data Write Error of CarDataWriter: ', e)
-    
+
+
 
     def FareDataWriter(self, filename):
         try:
@@ -175,6 +201,12 @@ class Scraper:
         except Exception as e:
             print('Data Write Error of FareDataWriter: ', e)
 
+    def ServiceLocationWriter(self, filename):
+        try:
+            df = pd.DataFrame(self.service_location)
+            df.to_json(filename, orient='records', lines=True)
+        except Exception as e:
+            print('Data Write Error of ServiceLocationWriter: ', e)
 
 if __name__ == "__main__":
     try:
@@ -184,7 +216,7 @@ if __name__ == "__main__":
         #create_ec2_instance()
         #time.sleep(20)
         try:
-            for i in range(0, 15):
+            for i in range(0, 1):
                 address = df[0][i]['address']
                 city = df[0][i]['address'].split(",")[0].strip()
                 end_date = "2022-11-01"
@@ -193,14 +225,15 @@ if __name__ == "__main__":
                 start_time = "06%3A00"
                 latitude = df[0][i]['lat']
                 longitude = df[0][i]['lon']
+                #scraper.ServiceableArea(address)
                 #ip = random.choice(ip_list)
-                data_chunck = [address, city, end_date, end_time, start_date, start_time, latitude, longitude]
+                #data_chunck = [address, city, end_date, end_time, start_date, start_time, latitude, longitude]
 
-                concc = Concurrency(worker_thread=50)
-                concc.run_thread(func=scraper.GetCarData, 
-                param_list=[data_chunck], param_name=["address", "city", "end_date", "end_time", "start_date", "start_time", "latitude", "longitude"])
+                #concc = Concurrency(worker_thread=50)
+                #concc.run_thread(func=scraper.GetCarData, 
+                #param_list=[data_chunck], param_name=["address", "city", "end_date", "end_time", "start_date", "start_time", "latitude", "longitude"])
             
-            scraper.CarDataWriter('/mnt/efs/fs1/raw/getaround/test_6.json')
+                scraper.CarDataWriter(latitude, longitude)
 
         except Exception as e:
             print(e)
@@ -248,8 +281,4 @@ if __name__ == "__main__":
 
 end = time.time()
 
-with open('Data/time.txt', 'a+') as f:
-    f.write(str(end - start))
-    # add new line
-    f.write("\n")
-
+print("Total time taken: ", end - start)

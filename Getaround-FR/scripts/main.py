@@ -1,4 +1,6 @@
 from ast import While
+from audioop import add
+from operator import le
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -9,6 +11,7 @@ import pandas as pd
 from concurrency import Concurrency
 import random
 import time
+import datetime
 
 start = time.time()
 ip_list = []
@@ -27,6 +30,7 @@ class Scraper:
         self.servicable_api  = "https://fr.getaround.com/autocomplete/address?delivery_points_of_interest_only=false&enable_google_places=true&enable_imprecise_addresses=true&input={}"     
         self.category_data_frames = []
         self.fare_list = []
+        self.servicable_list = []
         self.storage_path = "/mnt/efs/fs1/raw/getaround/"
 
 
@@ -47,6 +51,9 @@ class Scraper:
                 'https': f'http://{ip}:3128'
             }
             response = request.get(api, proxies=proxies)
+            print('response.status_code: ', response.status_code, "of", address, "at", ip, "of ServiceableArea")
+            if response.status_code == 200:
+                self.servicable_list.append(response.json())
             return response.status_code
 
         except Exception as e:
@@ -209,6 +216,15 @@ class Scraper:
             df.to_json(filename, orient='records', lines=True)
         except Exception as e:
             print('Data Write Error of FareDataWriter: ', e)
+
+    
+    def ServiceableAreaDataWriter(self, filename):
+        try:
+            df = pd.DataFrame(self.servicable_list)
+            df.to_json(filename, orient='records', lines=True)
+        except Exception as e:
+            print('Data Write Error of ServiceableAreaDataWriter: ', e)
+
     
     def create_ec2_instance(self, number_of_instance):
         print("Creating {} EC2 Proxy Instance".format(number_of_instance))
@@ -249,18 +265,17 @@ class Scraper:
 if __name__ == "__main__":
     
     try:
-
         scraper = Scraper()
-        df = pd.read_json('Data/geojson/google_geoJson.json', orient='records', lines=True) 
+        
+        df = pd.read_json('Getaround-FR/Data/geojson/google_geoJson.json', orient='records', lines=True) 
 
-        n = 3
+        n = 5
         scraper.create_ec2_instance(n)
         time.sleep(5)
         print("Waiting for EC2 instances to start")
-
-
+ 
         try:
-            for i in range(0, 1000):
+            for i in range(0, len(df)):
                 address = df[0][i]['address']
                 city = df[0][i]['address'].split(",")[0].strip()
                 end_date = "2022-11-01"
@@ -270,31 +285,40 @@ if __name__ == "__main__":
                 latitude = df[0][i]['lat']
                 longitude = df[0][i]['lon']
                 ip = ip_list[i%n] # roatating ip
-                data_chunck = [address, city, end_date, end_time, start_date, start_time, latitude, longitude,ip]
+                if i%25 == 0:
+                    time.sleep(random.randint(10, 20))
 
+                data_chunck = [address, city, end_date, end_time, start_date, start_time, latitude, longitude,ip]
+                print(i)
                 concc = Concurrency(worker_thread=100)
                 concc.run_thread(func=scraper.GetCarData, 
                 param_list=[data_chunck], param_name=["address", "city", "end_date", "end_time", "start_date", "start_time", "latitude", "longitude", "ip"])
             
+
             scraper.CarDataWriter('{}test_9_car.json'.format(scraper.storage_path))
             scraper.FareDataWriter('{}test_9_fare.json'.format(scraper.storage_path))
+            scraper.ServiceableAreaDataWriter('{}test_9_serviceable.json'.format(scraper.storage_path))
 
         except Exception as e:
             print(e)
             pass
 
-        scraper.DeleteInstance()
-        time.sleep(5)
-
     except KeyboardInterrupt:
         print('KeyboardInterrupt')
         scraper.DeleteInstance()
+        scraper.CarDataWriter('{}test_9_car.json'.format(scraper.storage_path))
+        scraper.FareDataWriter('{}test_9_fare.json'.format(scraper.storage_path))
+        scraper.ServiceableAreaDataWriter('{}test_9_serviceable.json'.format(scraper.storage_path))
+        print('Data Saved')
+
 
 
 end = time.time()
 
-with open('Data/time.txt', 'a+') as f:
-    f.write(str(end - start))
+with open('Getaround-FR/Data/time.txt', 'a+') as f:
+    Datetime = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    f.write(str(end - start),"Date")
+    f.write(Datetime)
     # add new line
     f.write("\n")
 
