@@ -9,6 +9,9 @@ from concurrency import Concurrency
 import random
 import time
 import datetime
+import os
+import sys
+import gzip
 
 start = time.time()
 ip_list = []
@@ -19,6 +22,8 @@ adapter = HTTPAdapter(max_retries=retry)
 request.mount('http://', adapter)
 request.mount('https://', adapter)
 
+Datetime = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 class Scraper:
     def __init__(self):                   
@@ -290,7 +295,7 @@ if __name__ == "__main__":
         print("Waiting for EC2 instances to start")
  
         try:
-            for i in range(0, len(df)):
+            for i in range(0, 1000):
                 address = df[0][i]['address']
                 city = df[0][i]['address'].split(",")[0].strip()
                 end_date = "2022-11-01"
