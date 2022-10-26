@@ -13,6 +13,8 @@ import gzip
 import datetime
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
+from datetime import timedelta
+import sys
 
 #start = time.time()
 ip_list = []
@@ -25,6 +27,8 @@ request.mount('https://', adapter)
 
 Datetime = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 timestamp = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+date = datetime.date.today()
+
 class Scraper:
     def __init__(self):
         self.headers = json.load(open('Getaround-UK/Data/headers/headers.json'))
@@ -298,7 +302,17 @@ class Scraper:
         self.create_ec2_instance(n)
         print("IP Rotation Completed")
 
-
+    def date_generator(self):
+        start_date = date.today()
+        start_date_gap = [ 0, 1, 2, 3, 4, 5, 6, 7, 14, 21, 28, 56, 84]
+        end_date_gap =  [1, 2, 3, 4, 5, 6, 7, 14, 28]
+        date_list = []
+        for x in start_date_gap:
+            new_start_date = start_date + timedelta(days=x)
+            for y in end_date_gap:
+                new_end_date = new_start_date + timedelta(days=y)
+                date_list.append([new_start_date, new_end_date])
+        return date_list
 
 if __name__ == "__main__":
     try:
@@ -310,25 +324,29 @@ if __name__ == "__main__":
         scraper.create_ec2_instance(n)
         time.sleep(5)
         print("Waiting for EC2 instances to start")
-
+        data_chunck = []
         try:
-            for i in range(0, 1000):
-                address = df[0][i]['address']
-                city = df[0][i]['address'].split(",")[0].strip()
-                end_date = "2022-10-29"
-                end_time = "07%3A00"
-                start_date = "2022-10-27"
-                start_time = "06%3A00"
-                latitude = df[0][i]['lat']
-                longitude = df[0][i]['lon']
-                ip = ip_list[i%n]
-                data_chunck = [address, city, end_date, end_time, start_date, start_time, latitude, longitude,ip]
+            # get start and end date from date_generator
+            date_list = scraper.date_generator()
+
+            for start_date, end_date in date_list:
+                for i in range(0, 5):
+                    address = df[0][i]['address']
+                    city = df[0][i]['address'].split(",")[0].strip()
+                    end_date = end_date
+                    end_time = "07%3A00"
+                    start_date = start_date
+                    start_time = "06%3A00"
+                    latitude = df[0][i]['lat']
+                    longitude = df[0][i]['lon']
+                    ip = ip_list[i%n]
+                    data_chunck.append([address, city, end_date, end_time, start_date, start_time, latitude, longitude,ip])
 
 
-                concc = Concurrency(worker_thread=50)
-                concc.run_thread(func=scraper.GetCarData, 
-                param_list=[data_chunck], param_name=["address", "city", "end_date", "end_time", "start_date", "start_time", "latitude", "longitude", "ip"])
-                scraper.CarDataWriter(latitude, longitude)
+            concc = Concurrency(worker_thread=20)
+            concc.run_thread(func=scraper.GetCarData, 
+            param_list=data_chunck, param_name=["address", "city", "end_date", "end_time", "start_date", "start_time", "latitude", "longitude", "ip"])
+            scraper.CarDataWriter(latitude, longitude)
 
             scraper.FullCarDataWriter('{}test_9_car.json'.format(scraper.storage_path))
             scraper.FareDataWriter('{}test_9_fare.json'.format(scraper.storage_path))
