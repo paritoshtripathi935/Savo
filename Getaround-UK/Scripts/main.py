@@ -304,6 +304,8 @@ class Scraper:
 
     def date_generator(self):
         start_date = date.today()
+        # start date is tommorow
+        start_date = start_date + timedelta(days=1)
         start_date_gap = [ 0, 1, 2, 3, 4, 5, 6, 7, 14, 21, 28, 56, 84]
         end_date_gap =  [1, 2, 3, 4, 5, 6, 7, 14, 28]
         date_list = []
@@ -319,35 +321,37 @@ if __name__ == "__main__":
         scraper = Scraper()
         
         df = pd.read_json('Getaround-UK/Data/geojson/google_geoJson.json', orient='records', lines=True) 
-
-        n = 1
+        n = 10
         scraper.create_ec2_instance(n)
         time.sleep(5)
         print("Waiting for EC2 instances to start")
         data_chunck = []
         try:
-            # get start and end date from date_generator
             date_list = scraper.date_generator()
 
-            for start_date, end_date in date_list:
-                for i in range(0, 5):
+            for i in range(0, len(df)):
+                for start_date, end_date in date_list:
                     address = df[0][i]['address']
                     city = df[0][i]['address'].split(",")[0].strip()
-                    end_date = end_date
+                    end_date = end_date.strftime("%Y-%m-%d")
                     end_time = "07%3A00"
-                    start_date = start_date
+                    start_date = start_date.strftime("%Y-%m-%d")
                     start_time = "06%3A00"
                     latitude = df[0][i]['lat']
                     longitude = df[0][i]['lon']
                     ip = ip_list[i%n]
                     data_chunck.append([address, city, end_date, end_time, start_date, start_time, latitude, longitude,ip])
+                
+            print(len(data_chunck))
+            print(data_chunck[1])
 
-
-            concc = Concurrency(worker_thread=20)
+            concc = Concurrency(worker_thread=10, worker_process=1)
             concc.run_thread(func=scraper.GetCarData, 
             param_list=data_chunck, param_name=["address", "city", "end_date", "end_time", "start_date", "start_time", "latitude", "longitude", "ip"])
-            scraper.CarDataWriter(latitude, longitude)
+            
 
+            
+            #scraper.CarDataWriter(latitude, longitude)
             scraper.FullCarDataWriter('{}test_9_car.json'.format(scraper.storage_path))
             scraper.FareDataWriter('{}test_9_fare.json'.format(scraper.storage_path))
             scraper.ServiceableAreaDataWriter('{}test_9_serviceable.json'.format(scraper.storage_path))
@@ -365,6 +369,7 @@ if __name__ == "__main__":
         scraper.FareDataWriter('{}test_9_fare.json'.format(scraper.storage_path))
         scraper.ServiceableAreaDataWriter('{}test_9_serviceable.json'.format(scraper.storage_path))
         print('Data Saved')
+        pass    
 
 
 """
