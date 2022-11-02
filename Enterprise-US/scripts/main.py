@@ -143,7 +143,7 @@ if __name__ == "__main__":
                     lattitude, longitude = data['features'][i]['geometry']['coordinates'][0][0]
                     start_date = "2022-11-03T12:00"
                     end_date = "2022-11-04T12:00"
-                    scraper.get_cars(lattitude, longitude, start_date, end_date)
+                    #scraper.get_cars(lattitude, longitude, start_date, end_date)
                     
                     data_chunck.append([lattitude, longitude, start_date, end_date])
                     
