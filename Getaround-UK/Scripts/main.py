@@ -261,15 +261,12 @@ if __name__ == "__main__":
                 latitude = df[0][i]['lat']
                 longitude = df[0][i]['lon']
                 ip = ip_list[i%n]
-                page = 1
-                
-                #scraper.GetCarData(address, city, end_date, end_time, start_date, start_time, latitude, longitude, ip, page)
-                
-                data_chunck.append([address, city, end_date, end_time, start_date, start_time, latitude, longitude, ip, page])
-                
+                # add 10 pages
+                for j in range(0, 10):
+                    data_chunck.append([address, city, end_date, end_time, start_date, start_time, latitude, longitude, ip, j])
                 
                 if len(data_chunck) == 500:
-                    concc = Concurrency(worker_thread=5, worker_process=1)
+                    concc = Concurrency(worker_thread=10, worker_process=1)
                     concc.run_thread(func=scraper.GetCarData, param_list=data_chunck, param_name=["address", "city", "end_date", "end_time", "start_date", "start_time", "latitude", "longitude", "ip", "page"])
                     data_chunck = []
                     scraper.ipRotation(n)
