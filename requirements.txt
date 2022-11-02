@@ -3,3 +3,4 @@ requests
 numpy
 bs4
 geopy
+selenium

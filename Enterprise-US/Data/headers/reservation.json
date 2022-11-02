@@ -4,5 +4,6 @@
 "domain_country_of_residence":"US",
 "locale":"en",
 "origin":"https://www.enterprise.com",
-"referer":"https://www.enterprise.com/"
+"referer":"https://www.enterprise.com/",
+"Content-Type":"application/json"
 }
