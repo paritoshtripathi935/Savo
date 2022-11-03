@@ -1,0 +1,21 @@
+{
+    "authority":"www.budget.com",
+    "accept":"application/json, text/plain, */*", 
+    "accept-language":"en-US,en;q=0.5",
+    "bookingtype":"car",
+    "channel":"Digital",
+    "content-type":"application/json",
+    "devicetype":"handheld",
+    "domain":"us",
+    "locale":"en",
+    "origin":"https://www.budget.com",
+    "password":"BUDCOM",
+    "referer":"https://www.budget.com/en/locations/find-a-location",
+    "sec-fetch-dest":"empty",
+    "sec-fetch-mode":"cors",
+    "sec-fetch-site":"same-origin",
+    "sec-gpc":"1",
+    "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
+    "username":"BUDCOM"
+}
+  

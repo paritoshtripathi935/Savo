@@ -1,0 +1,21 @@
+{
+    "authority": "www.budget.com",
+    "accept": "application/json, text/plain, */*",
+    "accept-language": "en-US,en;q=0.5",
+    "bookingtype": "car",
+    "channel": "Digital",
+    "content-type": "application/json",
+    "devicetype": "tab",
+    "digital_token": "eyJjdHkiOiJKV1QiLCJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiZGlyIn0..uxNkOqHHHG9x2usl.LInjG8drI5c8PVA8dQvMbPfFFSDX_sMZouUPaw9BAsv3_0gxNqpipNYD1tUv3uHxzjZIRmK1ZwouD3xy-djCKkEhSCthSL7OAOy95KcpC59jZnJ8nsiKAhfWjAAPSzAqFzL2cGX9SEWEhfmYal3YHp4xQ8x-XCqrbtuOuceJXWreCdQPXNW_p9J5UxvtJov7R4Y76ROcK5olkQjmlHe0htlRIEr102IEPyHNpxDKecrGhPbduH2kmKSqsXf0QrjfwjPRU8d37vHSFgVy3tPbvFSiRUTgsMZ5V1-OvvIu2fpleJyRw1xRIkbTPWM.bXVb7mpaTlULgzqkdYG-kA",
+    "domain": "us",
+    "locale": "en",
+    "origin": "https://www.budget.com",
+    "password": "BUDCOM",
+    "referer": "https://www.budget.com/en/reservation",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36",
+    "sec-gpc": "1",
+    "username": "BUDCOM"
+  }
