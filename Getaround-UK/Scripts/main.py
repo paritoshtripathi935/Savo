@@ -214,12 +214,14 @@ class Scraper:
 
         print("All Instances are deleted")
     
+
     def ipRotation(self,n):
         print("IP Rotation")
         self.DeleteInstance()
         ip_list.clear()
         self.create_ec2_instance(n)
         print("IP Rotation Completed")
+
 
     def date_generator(self):
         start_date = date.today()
@@ -254,15 +256,15 @@ if __name__ == "__main__":
             for i in range(0, len(df)):
                 address = df[0][i]['address']
                 city = df[0][i]['address'].split(",")[0].strip()
-                end_date = "2022-11-04"
+                end_date = "2022-11-05"
                 end_time = "07%3A00"
-                start_date = "2022-11-02"
+                start_date = "2022-11-04"
                 start_time = "07%3A00"
                 latitude = df[0][i]['lat']
                 longitude = df[0][i]['lon']
                 ip = ip_list[i%n]
                 # add 10 pages
-                for j in range(0, 10):
+                for j in range(1, 5):
                     data_chunck.append([address, city, end_date, end_time, start_date, start_time, latitude, longitude, ip, j])
                 
                 if len(data_chunck) == 500:

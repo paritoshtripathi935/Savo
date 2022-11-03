@@ -35,6 +35,12 @@ print(len(df))
 9059 addresses
 85.983 minutes runtime
 
+with pagination 5
+545 unique car id
+2181 total cars
+9059 addresses
+360.75 minutes runtime
+
     path = "/mnt/efs/fs1/raw/budget/us/raw/2022-11-01-07-34-59/Location/{},{}"
     dirs = os.listdir(path)
     count = 0
