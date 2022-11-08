@@ -1,0 +1,20 @@
+{
+"Host":"prd-east.webapi.enterprise.com",
+"Sec-Ch-Ua":"'Chromium';v='107', 'Not=A?Brand';v='24'",
+"Locale":"en_US",
+"Sec-Ch-Ua-Mobile":"?0",
+"Tab_id":"1667337774734_2",
+"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.5304.63 Safari/537.36",
+"Domain_country_of_residence":"US",
+"Accept":"application/json, text/plain, */*",
+"Brand":"ENTERPRISE",
+"Channel":"WEB",
+"Sec-Ch-Ua-Platform":"Linux",
+"Origin":"https://www.enterprise.com",
+"Sec-Fetch-Site":"same-site",
+"Sec-Fetch-Mode":"cors",
+"Sec-Fetch-Dest":"empty",
+"Referer":"https://www.enterprise.com/",
+"Accept-Encoding":"gzip, deflate",
+"Accept-Language":"en-GB,en-US;q=0.9,en;q=0.8"
+}

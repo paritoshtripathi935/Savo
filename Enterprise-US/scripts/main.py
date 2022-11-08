@@ -20,7 +20,7 @@ start = time.time()
 ip_list = []
 
 request = requests.Session()
-retry = Retry(connect=5, backoff_factor=0.1)
+retry = Retry(connect=5, backoff_factor=0.5)
 adapter = HTTPAdapter(max_retries=retry)
 request.mount('http://', adapter)
 request.mount('https://', adapter)
@@ -34,24 +34,39 @@ class Scraper:
         self.session_headers = json.load(open('Enterprise-US/Data/headers/reservation.json'))
         self.activate_session_headers = json.load(open('Enterprise-US/Data/headers/activate.json'))
         self.car_headers = json.load(open('Enterprise-US/Data/headers/car.json'))
+        self.select_car = json.load(open('Enterprise-US/Data/headers/select_car.json'))
+        #self.list_Vehicles_headers = json.load(open('Enterprise-US/Data/headers/listVehicles.json'))
+        self.fare_headers = json.load(open('Enterprise-US/Data/headers/fare_headers.json'))
 
         self.session_api = "https://prd-east.webapi.enterprise.com/enterprise-ewt/current-session/clear-reservation"
         self.activate_session = "https://prd-east.webapi.enterprise.com/enterprise-ewt/enterprise/reservations/initiate"
-        self.car_api = "https://prd-east.webapi.enterprise.com/enterprise-ewt/enterprise/reservations/vehicles/availability"
         self.location_api = "https://prd.location.enterprise.com/enterprise-sls/search/location/enterprise/web/spatial/{}/{}?dto=true&rows=1&cor=US&locale=en_US"
+        self.car_api = "https://prd-east.webapi.enterprise.com/enterprise-ewt/enterprise/reservations/vehicles/availability"
+        self.select_car_api = "https://prd-east.webapi.enterprise.com/enterprise-ewt/reservations/selectCarClass"
+        self.fare_conditions_api = "https://prd-east.webapi.enterprise.com/enterprise-ewt/current-session?reservationFlow=true&route=extras"
 
         self.storage_path = "/mnt/efs/fs1/raw/enterprise/usa/"
+        self.car_class_code = []
         self.category_data_frames = []
+        self.select_car_list = []
+        self.fare_list = []
 
 
-    def make_session(self, lattitude , longitude, start_date, end_date):
+    def make_session(self, lattitude , longitude, start_date, end_date, ip):
+        proxies = {
+                'http': f'http://{ip}:3128',
+                'https': f'http://{ip}:3128'
+            }
+
         try:
-            response = request.get(self.location_api.format(lattitude, longitude))
+            response = requests.get(self.location_api.format(lattitude, longitude))
+            #print(response.status_code)
+            time.sleep(1)
             if response.status_code == 200:
-                id = response.json()['result'][0]['id']
-                address = response.json()['result'][0]['address']['street_addresses'][0]
 
-                if id and address is not None:
+                if response.json()['result']:
+                    id = response.json()['result'][0]['id']
+                    address = response.json()['result'][0]['address']['street_addresses'][0]
                     print("Location Found for", lattitude, longitude, id, address)
 
                     body = {}
@@ -66,24 +81,36 @@ class Scraper:
                     }
                     
                     response = request.post(self.session_api, headers=self.session_headers, json=body)
-                    
+                    time.sleep(10)
                     if response.status_code == 200:
 
                         response = request.post(self.activate_session, headers=self.activate_session_headers, json=activate_body)
+                        time.sleep(5)
                         if response.status_code == 200:
                             print("Session Activated")
                             return True
+
                         else:
                             print("Session Not Activated")
                             return False
+
                     else:
                         print("Session Not Created")
                         return False
 
+                else:
+                    print("Location Not Found for", lattitude, longitude)
+                    return False
+                    #print(response.json()['result'])
+
+            else:
+                print("Location API Failed")
+                return False
+
         except Exception as e:
             print(e)
-            print(response.json(), lattitude, longitude)
             print('line number: ', sys.exc_info()[-1].tb_lineno)
+            pass
 
 
 
@@ -101,31 +128,114 @@ class Scraper:
                 self.category_data_frames.clear()
                 
                 print("CarDataWriter: is written in raw folder", latitude, longitude)
+            
+            with gzip.open(self.storage_path + "raw/" + Datetime + "/" + "Location/" + str(latitude) + "," + str(longitude) + "/" + "select-car" + ".json.gz", 'wt') as f:
+                json.dump(self.select_car_list, f)
+                self.select_car_list.clear()
+                
+                print("SelectDataWriter: is written in raw folder", latitude, longitude)
+
+            with gzip.open(self.storage_path + "raw/" + Datetime + "/" + "Location/" + str(latitude) + "," + str(longitude) + "/" + "fare" + ".json.gz", 'wt') as f:
+                json.dump(self.fare_list, f)
+                self.fare_list.clear()
+                
+                print("FareDataWriter: is written in raw folder", latitude, longitude)
 
         except Exception as e:
             print('Data Write Error of CarDataWriter: ', e)
             print('line number: ', sys.exc_info()[-1].tb_lineno)
 
 
-
-    def get_cars(self, lattitude, longitude, start_date, end_date):
+    def get_cars(self, lattitude, longitude, start_date, end_date,ip):
         try:
-            self.make_session(lattitude, longitude, start_date, end_date)
+            if self.make_session(lattitude, longitude, start_date, end_date, ip) == True:   
+                time.sleep(1)
+                response = request.get(self.car_api, headers=self.car_headers)
 
-            response = request.get(self.car_api, headers=self.car_headers)
+                if response.status_code == 200:
+                    try:
+                        if response.json() != {"code": "#timedout", "message": "link to SESSION_TIMEDOUT", "parameters": [], "type": "HREF", "displayAs": "ALERT", "defaultMessage": "link to SESSION_TIMEDOUT"}:
+                            self.category_data_frames.append(response.json())
+                            print("Cars Found")
 
-            if response.status_code == 200:
-                print("Cars Found for", lattitude, longitude)
-                self.category_data_frames.append(response.json())
-                self.CarDataWriter(lattitude, longitude)
+                            for i in range(0,len(response.json())):
+                                body = {"car_class_code":response.json()['availablecars'][i]['code']}
+
+                                response = request.post(self.select_car_api, headers=self.select_car, json=body)
+                                #print(response.json())
+                                time.sleep(1)
+
+                                if response.json() != []:
+                                    print("Select Car API Success")
+                                    self.select_car_list.append(response.json())
+
+                                    response = request.get(self.fare_conditions_api, headers=self.fare_headers)
+
+                                    if response.status_code == 200:
+                                        self.fare_list.append(response.json())
+                                        print("Fare Conditions Found")
+                                        self.CarDataWriter(lattitude, longitude)
+                        
+                                    else:
+                                        print("Fare Conditions Not Found")
+                                    
+                        else:
+                            print("Timeout Error")
+                            pass
+
+                    except Exception as e:
+                        print("Cars Not Found", e)
+                        pass
+                else:
+                    print("Car Data Not Found")
                 
-            else:
-                print("Cars Not Found")
-                return False
-
         except Exception as e:
             print(e)
             print('line number: ', sys.exc_info()[-1].tb_lineno)
+    
+
+    def create_ec2_instance(self, number_of_instance):
+        print("Creating {} EC2 Proxy Instance".format(number_of_instance))
+        url = "http://172.31.39.71:8000/create/"
+
+        payload = {
+                    "template_name":"SquidProxyServer",
+                    "template_version":"3",
+                    "rival":"enterprise-usa",
+                    "ownerARN":"arn:aws:iam::047719688069:user/paritosh.tripathi@anakin.company",
+                    "region": "ap-south-1",
+                    "count":number_of_instance
+        }
+        response = requests.request("POST", url, json=payload)
+
+        for key, value in response.json().items():
+            ip_list.append(value['private'])
+        
+        print("All EC2 Proxy Instance created")
+
+
+    def DeleteInstance(self):
+        print("Deleting EC2 Proxy instance")
+        url = "http://172.31.39.71:8000/terminate/"
+
+        payload = {
+                    "template_name":"SquidProxyServer",
+                    "template_version":"3",
+                    "rival":"enterprise-usa",
+                    "ownerARN":"arn:aws:iam::047719688069:user/paritosh.tripathi@anakin.company",
+                    "region": "ap-south-1"
+            }
+        response = requests.request("POST", url, json=payload)
+
+        print("All Instances are deleted")
+
+
+    def ipRotation(self,n):
+        print("IP Rotation")
+        self.DeleteInstance()
+        ip_list.clear()
+        self.create_ec2_instance(n)
+        print("IP Rotation Completed")
 
 
 
@@ -133,7 +243,9 @@ if __name__ == "__main__":
     try:
         scraper = Scraper()
         print("Scraper initialized")
-
+        
+        n = 2
+        #scraper.create_ec2_instance(n)
         data_chunck = []
 
         try:
@@ -141,25 +253,43 @@ if __name__ == "__main__":
                 data = json.load(f)
                 for i in range(0,len(data['features'])):
                     lattitude, longitude = data['features'][i]['geometry']['coordinates'][0][0]
-                    start_date = "2022-11-03T12:00"
-                    end_date = "2022-11-04T12:00"
-                    #scraper.get_cars(lattitude, longitude, start_date, end_date)
+                    start_date = "2022-11-08T12:00"
+                    end_date = "2022-11-09T12:00"
+                    #ip = ip_list[i%n]
+                    # pass 
+                    ip = "you" # test
+
+                    #scraper.get_cars(longitude, lattitude, start_date, end_date, ip)
                     
-                    data_chunck.append([lattitude, longitude, start_date, end_date])
-                    
-                    if len(data_chunck) == 500:
-                        concc = Concurrency(worker_thread=10, worker_process=1)
-                        concc.run_thread(func=scraper.get_cars, param_list=data_chunck, param_name=['lattitude', 'longitude', 'start_date', 'end_date'])
+                    data_chunck.append([longitude, lattitude, start_date, end_date, ip])
+                    count = 0
+                    start_time = time.time()
+                    if len(data_chunck) == 250:
+                        concc = Concurrency(worker_thread=5, worker_process=1)
+                        concc.run_thread(func=scraper.get_cars, param_list=data_chunck, param_name=['lattitude', 'longitude', 'start_date', 'end_date', 'ip'])
                         data_chunck = []
                         time.sleep(5)
+                        count += 1
+                        end_time = time.time()
+                        print("Data Chunck", count, "out of", len(data['features'])/250, "completed")
+                        
+                        with open('Enterprise-US/Data/progress.txt', 'a+') as f:
+                            f.write("Data Chunck {} out of {} completed, time taken {}".format(count, 16000/250, end_time-start_time))
+
                         print("Data Chunck -----------------------------------------------------------------------------")
                     
+            #scraper.DeleteInstance()
+        
         except Exception as e:
             print(e)
+            print('line number: ', sys.exc_info()[-1].tb_lineno)
             pass
-                
-    except Exception as e:
-        print(e)
+        
+        #scraper.DeleteInstance()   
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt")
+        scraper.DeleteInstance()
+        pass
 
 
 
